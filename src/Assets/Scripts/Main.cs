@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class Main : MonoBehaviour {
 	public Vehicle vehicle;
 	public int numTargets = 8;
-	
+	public Material targetMarkerMaterial;
+
 	private List<Vector2> mTargets;
 	private GameObject targetMarker = null;
 	
@@ -15,7 +17,7 @@ public class Main : MonoBehaviour {
 		
 		MakeTargets();
 		
-		SetTargetMarker (Vector2.zero, true);
+		SetTargetMarker (Vector2.zero);
 	}
 	
 	// Update is called once per frame
@@ -23,18 +25,17 @@ public class Main : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
 		
 		// set new target
-//		if (Input.GetMouseButtonDown(0)) {
-//			Vector3 targetPos = camera.ScreenToWorldPoint(Input.mousePosition);
-//			vehicle.desiredPosition = new Vector2(targetPos.x, targetPos.y);
-//			SetTargetMarker(targetPos, true);
-//		}
+		if (Input.GetMouseButtonDown(0)) {
+			Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			vehicle.desiredPosition = new Vector2(targetPos.x, targetPos.y);
+			SetTargetMarker(targetPos);
+		}
 		
-		//if (vehicle.desiredPosition != Vector2.zero)
-			vehicle.Steer(mTargets);
+		vehicle.Steer(mTargets);
 	}
 	
 	void OnGUI() {
-		if (GUI.Button(new Rect(Screen.width-100, 0, 100, 40), "Reset")) Application.LoadLevel(0);
+		if (GUI.Button(new Rect(Screen.width-100, 0, 100, 40), "Reset")) SceneManager.LoadScene(0);
 	}
 	
 	private void MakeTargets() {
@@ -46,21 +47,12 @@ public class Main : MonoBehaviour {
 		}
 	}
 	
-	private void SetTargetMarker(Vector2 pos, bool setIt) {
-		if (setIt) {
-			if (targetMarker != null) {
-				Destroy(targetMarker);
-			}
-			
+	private void SetTargetMarker(Vector2 pos) {
+		if (targetMarker == null) {
 			targetMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			targetMarker.transform.position = new Vector3(pos.x, pos.y, 10);
-			targetMarker.GetComponent<Renderer>().material.color = Color.red;
-			
-		} else {
-			if (targetMarker != null) {
-				Destroy(targetMarker);
-				targetMarker = null;
-			}
+			targetMarker.GetComponent<Renderer>().material = targetMarkerMaterial;	
 		}
+
+		targetMarker.transform.position = new Vector3(pos.x, pos.y, 10);
 	}
 }

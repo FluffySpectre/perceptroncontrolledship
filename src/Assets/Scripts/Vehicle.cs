@@ -59,10 +59,6 @@ public class Vehicle : MonoBehaviour {
 		ApplyForce(result);
 		
 		// calculate error and feed it back into the perceptron
-//		Vector3 lookDirection = new Vector3(desiredPosition.x, desiredPosition.y, 0) - transform.position;
-//		lookDirection.y = 0;
-//		transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(lookDirection.normalized), Time.deltaTime * 1);
-		
 		Vector2 error = desiredPosition - GetVehiclePos2D();
 		mBrain.Train(forces, error);
 	}
